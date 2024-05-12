@@ -24,5 +24,20 @@ class StepRepository {
         fun getTodaySteps(context: Context): Int? {
             return getStepsByDay(context, Calendar.getInstance())
         }
+
+        fun updateHour(context: Context, cal: Calendar, count: Int) {
+            cal.set(Calendar.MINUTE, 0)
+            cal.set(Calendar.SECOND, 0)
+            cal.set(Calendar.MILLISECOND, 0)
+
+            val currentHour = getStepDAO(context)?.getCurrentHour(cal.time)
+
+            if (currentHour == null) {
+                val stepModel = StepModel(date = cal.time, count = count)
+                getStepDAO(context)?.insert(stepModel)
+            } else {
+                getStepDAO(context)?.updateCount(cal.time, count)
+            }
+        }
     }
 }

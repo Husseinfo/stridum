@@ -11,6 +11,10 @@ interface StepDAO {
     @get:Query("SELECT * FROM step ORDER BY date DESC")
     val all: List<StepModel>?
 
+    @Query("SELECT * FROM step where date = :date")
+    fun getCurrentHour(date: Date): Int
+
+
     @Query("SELECT SUM(count) FROM step where date BETWEEN :date and :date + 24 * 3600 * 1000")
     fun getStepsByDay(date: Date): Int
 

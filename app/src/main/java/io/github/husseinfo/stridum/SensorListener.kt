@@ -18,6 +18,7 @@ import android.os.IBinder
 import android.util.Log
 import io.github.husseinfo.stridum.data.AppDatabase
 import io.github.husseinfo.stridum.data.StepModel
+import io.github.husseinfo.stridum.data.StepRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -83,24 +84,9 @@ class SensorListener : Service(), SensorEventListener {
         }
 
         serviceScope.launch {
-            updateDB(stepCount)
+            StepRepository.updateHour(baseContext, Calendar.getInstance(), stepCount)
         }
     }
-
-    private fun updateDB(stepCount: Int) {
-        val dao = AppDatabase.getDb(this)?.stepDAO()
-        val today = Calendar.getInstance().time
-        val stepModel = dao?.getByDate(today)
-
-        if (stepModel == null) {
-            val step = StepModel(date = today, count = stepCount)
-            dao?.insert(step)
-        } else {
-            stepModel.count += stepCount
-            dao.update(stepModel)
-        }
-    }
-
 
     override fun onDestroy() {
         super.onDestroy()
