@@ -30,9 +30,6 @@ interface StepDAO {
     @Insert
     fun insert(model: StepModel)
 
-    @Query("UPDATE step set count = count +  :count WHERE date = :date")
-    fun updateCount(date: Date, count: Int)
-
-    @Update
-    fun update(model: StepModel)
+    @Query("UPDATE step set count = count + :count WHERE date = :date")
+    fun incrementCount(date: Date, count: Int): Int
 }

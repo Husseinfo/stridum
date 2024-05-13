@@ -1,7 +1,8 @@
 package io.github.husseinfo.stridum.data
 
+import android.icu.util.Calendar
 import androidx.room.TypeConverter
-import java.util.Calendar
+
 import java.util.Date
 
 class Converters {
@@ -10,9 +11,7 @@ class Converters {
         return value?.let {
             val cal = Calendar.getInstance()
             cal.time = Date(it)
-            cal.set(Calendar.MINUTE, 0)
-            cal.set(Calendar.SECOND, 0)
-            cal.set(Calendar.MILLISECOND, 0)
+            cal.resetToHour()
             cal.time
         }
     }
@@ -22,9 +21,7 @@ class Converters {
         return date?.let {
             val cal = Calendar.getInstance()
             cal.time = it
-            cal.set(Calendar.MINUTE, 0)
-            cal.set(Calendar.SECOND, 0)
-            cal.set(Calendar.MILLISECOND, 0)
+            cal.resetToHour()
             cal.time.time
         }
     }
