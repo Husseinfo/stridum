@@ -25,6 +25,15 @@ class StepRepository {
             return getStepsByDay(context, Calendar.getInstance())
         }
 
+        fun getTodayHours(context: Context): List<StepModel>? {
+            val cal = Calendar.getInstance()
+            cal.set(Calendar.HOUR, 0)
+            cal.set(Calendar.MINUTE, 0)
+            cal.set(Calendar.SECOND, 0)
+            cal.set(Calendar.MILLISECOND, 0)
+            return getStepDAO(context)?.getTodayHours(cal.time)
+        }
+
         fun updateHour(context: Context, cal: Calendar, count: Int) {
             cal.set(Calendar.MINUTE, 0)
             cal.set(Calendar.SECOND, 0)

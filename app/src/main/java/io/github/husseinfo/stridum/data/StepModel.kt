@@ -7,13 +7,10 @@ import java.util.Date
 
 @Entity(tableName = "step")
 class StepModel(
-    @field:ColumnInfo(name = "count")
-    var count: Int,
-
+    @PrimaryKey
     @field:ColumnInfo(name = "date")
     var date: Date,
-) {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    var id = 0
-}
+
+    @field:ColumnInfo(name = "count")
+    var count: Int,
+)

@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 class SensorListener : Service(), SensorEventListener {
     private val serviceScope = CoroutineScope(Job())
     private lateinit var NOTIFICATION_CHANNEL_ID: String
-    private val MAX_BUFFER_SIZE = 1
+    private val MAX_BUFFER_SIZE = 100
     private var sinceBoot = 0
     private var buffer = 0
 
