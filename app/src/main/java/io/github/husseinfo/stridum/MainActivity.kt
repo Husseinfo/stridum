@@ -8,13 +8,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import io.github.husseinfo.stridum.data.StepModel
 import io.github.husseinfo.stridum.data.StepRepository
 import io.github.husseinfo.stridum.ui.theme.StridumTheme
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +62,11 @@ class MainActivity : ComponentActivity() {
         val countCoroutine = lifecycleScope.async(Dispatchers.IO) {
             StepRepository.getTodaySteps(baseContext)
         }
+
+        val previousDaysCoroutine = lifecycleScope.async(Dispatchers.IO) {
+            StepRepository.getPreviousDays(baseContext)
+        }
+
         lifecycleScope.launch(Dispatchers.Main) {
             val countCoroutineRes = countCoroutine.await()
             var count = countCoroutineRes.toString()
@@ -66,12 +74,15 @@ class MainActivity : ComponentActivity() {
                 count = "No"
             }
 
+            var previousDays = previousDaysCoroutine.await()
+
             setContent {
                 StridumTheme {
                     TodayCount(
                         count = count,
-                        modifier = Modifier.padding(PaddingValues(Dp(50f)))
+                        modifier = Modifier.padding(PaddingValues(Dp(30f)))
                     )
+                    ListPreviousDays(previousDays)
                 }
             }
         }
@@ -85,6 +96,15 @@ fun TodayCount(count: String, modifier: Modifier = Modifier) {
         text = "$count steps so far!",
         modifier = modifier
     )
+}
+
+@Composable
+fun ListPreviousDays(previousDays: List<StepModel>) {
+    LazyColumn(modifier = Modifier.padding(top = 100.dp)) {
+        items(previousDays.size) { item ->
+            Text(text = previousDays[item].count.toString(), modifier = Modifier.padding(16.dp))
+        }
+    }
 }
 
 @Preview(showBackground = true)

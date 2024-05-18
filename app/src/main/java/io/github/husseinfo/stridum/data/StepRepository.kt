@@ -13,7 +13,7 @@ class StepRepository {
             return dao
         }
 
-        fun getStepsByDay(context: Context, cal: Calendar): Int? {
+        private fun getStepsByDay(context: Context, cal: Calendar): Int? {
             cal.resetToDay()
             return getStepDAO(context)?.getStepsByDay(cal.time)
         }
@@ -36,6 +36,22 @@ class StepRepository {
             cal.resetToHour()
             if (getStepDAO(context)?.incrementCount(cal.time, count) != 1) {
                 getStepDAO(context)?.insert(StepModel(date = cal.time, count = count))
+            }
+        }
+
+        fun getPreviousDays(context: Context): List<StepModel> {
+            val days = mutableListOf<StepModel>()
+
+            for (i in -6..-1) {
+                val cal = Calendar.getInstance()
+                cal.add(Calendar.DAY_OF_MONTH, i)
+                cal.resetToDay()
+                val steps = getStepsByDay(context, cal)
+                days.add(StepModel(cal.time, steps ?: 0))
+            }
+
+            return days.sortedBy {
+                it.date.time * -1
             }
         }
     }
