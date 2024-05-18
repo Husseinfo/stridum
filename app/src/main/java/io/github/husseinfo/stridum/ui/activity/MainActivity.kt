@@ -1,4 +1,4 @@
-package io.github.husseinfo.stridum
+package io.github.husseinfo.stridum.ui.activity
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import io.github.husseinfo.stridum.service.SensorListener
 import io.github.husseinfo.stridum.data.StepModel
 import io.github.husseinfo.stridum.data.StepRepository
 import io.github.husseinfo.stridum.data.formatCount

@@ -3,4 +3,7 @@
     <string name="notif_step_title">Counting Steps…</string>
     <string name="notif_step_content">Steps count will be shown here once you start</string>
     <string name="notif_step_channel_id">Step</string>
+    <string name="appwidget_text">Count</string>
+    <string name="add_widget">Add Steps Count widget</string>
+    <string name="app_widget_description">Show today steps count</string>
 </resources>

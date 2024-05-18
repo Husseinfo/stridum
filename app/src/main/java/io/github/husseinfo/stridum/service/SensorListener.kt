@@ -1,4 +1,4 @@
-package io.github.husseinfo.stridum
+package io.github.husseinfo.stridum.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -16,22 +16,25 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import io.github.husseinfo.stridum.R
 import io.github.husseinfo.stridum.data.StepRepository
+import io.github.husseinfo.stridum.ui.activity.MainActivity
+import io.github.husseinfo.stridum.ui.widget.CountWidget
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
 class SensorListener : Service(), SensorEventListener {
     private val serviceScope = CoroutineScope(Job())
-    private lateinit var NOTIFICATION_CHANNEL_ID: String
-    private val MAX_BUFFER_SIZE = 100
+    private val maxBufferSize = 100
+    private val notificationChannelID: String = getString(R.string.notif_step_channel_id)
     private var sinceBoot = 0
     private var buffer = 0
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        NOTIFICATION_CHANNEL_ID = getString(R.string.notif_step_channel_id)
 
         if (Build.VERSION.SDK_INT >= 34) {
             startForeground(
@@ -40,10 +43,7 @@ class SensorListener : Service(), SensorEventListener {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
             )
         } else {
-            startForeground(
-                1,
-                getNotification(this),
-            )
+            startForeground(1, getNotification(this))
         }
 
 
@@ -60,7 +60,7 @@ class SensorListener : Service(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        Log.d(NOTIFICATION_CHANNEL_ID, "Accuracy Changed: $accuracy")
+        Log.d(notificationChannelID, "Accuracy Changed: $accuracy")
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -74,15 +74,16 @@ class SensorListener : Service(), SensorEventListener {
         sinceBoot = stepCount
 
 
-        if (buffer < MAX_BUFFER_SIZE)
+        if (buffer < maxBufferSize)
             return
         else {
             stepCount = buffer
             buffer = 0
         }
 
-        serviceScope.launch {
+        serviceScope.launch(Dispatchers.IO) {
             StepRepository.updateHour(baseContext, Calendar.getInstance(), stepCount)
+            updateWidget()
         }
     }
 
@@ -105,8 +106,8 @@ class SensorListener : Service(), SensorEventListener {
             context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val channel =
             NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                NOTIFICATION_CHANNEL_ID,
+                notificationChannelID,
+                notificationChannelID,
                 NotificationManager.IMPORTANCE_MIN
             )
         channel.importance = NotificationManager.IMPORTANCE_MIN
@@ -117,7 +118,7 @@ class SensorListener : Service(), SensorEventListener {
         manager.createNotificationChannel(channel)
         return Notification.Builder(
             context,
-            NOTIFICATION_CHANNEL_ID
+            notificationChannelID
         )
     }
 
@@ -136,5 +137,12 @@ class SensorListener : Service(), SensorEventListener {
             .setContentText(context.getString(R.string.notif_step_content))
             .setContentTitle(context.getString(R.string.notif_step_title))
         return notificationBuilder.build()
+    }
+
+    private fun updateWidget() {
+        val intent = Intent(this, CountWidget::class.java).apply {
+            action = CountWidget.ACTION_UPDATE_WIDGET
+        }
+        sendBroadcast(intent)
     }
 }

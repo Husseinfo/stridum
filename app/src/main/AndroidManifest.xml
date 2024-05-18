@@ -14,8 +14,20 @@
         android:supportsRtl="true"
         tools:targetApi="34">
 
+        <receiver
+            android:name=".ui.widget.CountWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/count_widget_info" />
+        </receiver>
+
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,11 +36,12 @@
         </activity>
 
         <service
-            android:name=".SensorListener"
+            android:name=".service.SensorListener"
             android:foregroundServiceType="health" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/notif_step_channel_id" />
     </application>
+
 </manifest>

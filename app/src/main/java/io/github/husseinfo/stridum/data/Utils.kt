@@ -19,11 +19,17 @@ fun formatCount(number: Int, space: Boolean): String {
     return number.toString().replace(Regex("(\\d)(?=(\\d{3})+\$)"), "\$1," + if (space) " " else "")
 }
 
+
+fun formatCountWidget(number: Int, space: Boolean): String {
+    return formatCount(number, space) + " \uD83D\uDC63"
+}
+
 fun getDayLabel(i: Int): String {
     if (i == 1)
         return "Yesterday"
 
     val cal = Calendar.getInstance()
     cal.add(Calendar.DAY_OF_MONTH, (i * -1) - 1)
-    return DayOfWeek.of(cal.get(Calendar.DAY_OF_WEEK)).toString().toLowerCase().capitalize()
+    return DayOfWeek.of(cal.get(Calendar.DAY_OF_WEEK)).toString().lowercase()
+        .replaceFirstChar { it.uppercase() }
 }
