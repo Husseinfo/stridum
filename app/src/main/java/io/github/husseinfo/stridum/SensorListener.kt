@@ -16,8 +16,6 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import io.github.husseinfo.stridum.data.AppDatabase
-import io.github.husseinfo.stridum.data.StepModel
 import io.github.husseinfo.stridum.data.StepRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -123,7 +121,7 @@ class SensorListener : Service(), SensorEventListener {
         )
     }
 
-    fun getNotification(context: Context): Notification {
+    private fun getNotification(context: Context): Notification {
         val notificationBuilder: Notification.Builder = getNotificationBuilder(context)
 
         notificationBuilder.setShowWhen(true).setContentIntent(

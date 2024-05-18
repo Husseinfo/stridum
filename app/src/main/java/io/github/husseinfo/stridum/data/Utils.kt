@@ -13,3 +13,7 @@ fun Calendar.resetToDay() {
     this.resetToHour()
     this.set(Calendar.HOUR, 0)
 }
+
+fun formatCount(number: Int): String {
+    return number.toString().replace(Regex("(\\d)(?=(\\d{3})+\$)"), "\$1,")
+}
