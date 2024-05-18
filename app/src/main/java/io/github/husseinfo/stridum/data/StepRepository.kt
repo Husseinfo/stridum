@@ -42,17 +42,15 @@ class StepRepository {
         fun getPreviousDays(context: Context): List<StepModel> {
             val days = mutableListOf<StepModel>()
 
-            for (i in -6..-1) {
+            for (i in 1..6) {
                 val cal = Calendar.getInstance()
-                cal.add(Calendar.DAY_OF_MONTH, i)
+                cal.add(Calendar.DAY_OF_MONTH, i * -1)
                 cal.resetToDay()
                 val steps = getStepsByDay(context, cal)
                 days.add(StepModel(cal.time, steps ?: 0))
             }
 
-            return days.sortedBy {
-                it.date.time * -1
-            }
+            return days
         }
     }
 }

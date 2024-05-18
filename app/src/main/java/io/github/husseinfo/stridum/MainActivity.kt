@@ -7,6 +7,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import io.github.husseinfo.stridum.data.StepModel
 import io.github.husseinfo.stridum.data.StepRepository
 import io.github.husseinfo.stridum.data.formatCount
+import io.github.husseinfo.stridum.data.getDayLabel
 import io.github.husseinfo.stridum.ui.theme.StridumTheme
 import io.github.husseinfo.stridum.ui.theme.Typography
 import kotlinx.coroutines.Dispatchers
@@ -100,12 +103,12 @@ fun TodayCount(count: Int, modifier: Modifier = Modifier) {
     ) {
         Text(
             style = Typography.titleLarge,
-            text = formatCount(count),
+            text = formatCount(count, false),
             modifier = modifier
         )
         Text(
             style = Typography.titleMedium,
-            text = " \uD83D\uDC63 steps so far!",
+            text = if (count > 0) " \uD83D\uDC63 steps so far!" else "\uD83D\uDCA4 no steps yet!",
             modifier = modifier
         )
     }
@@ -113,13 +116,21 @@ fun TodayCount(count: Int, modifier: Modifier = Modifier) {
 
 @Composable
 fun ListPreviousDays(previousDays: List<StepModel>) {
-    LazyColumn(modifier = Modifier.padding(top = 40.dp)) {
+    LazyColumn(modifier = Modifier.padding(top = 40.dp, start = 20.dp, end = 20.dp)) {
         items(previousDays.size) { item ->
-            Text(
-                style = Typography.bodyLarge,
-                text = previousDays[item].count.toString(),
-                modifier = Modifier.padding(16.dp)
-            )
+            Row {
+                Text(
+                    style = Typography.bodyMedium,
+                    text = getDayLabel(item.inc()),
+                    modifier = Modifier.padding(16.dp)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    style = Typography.bodyLarge,
+                    text = formatCount(previousDays[item].count, true),
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
     }
 }

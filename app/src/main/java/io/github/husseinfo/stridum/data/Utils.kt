@@ -1,6 +1,7 @@
 package io.github.husseinfo.stridum.data
 
 import android.icu.util.Calendar
+import java.time.DayOfWeek
 
 
 fun Calendar.resetToHour() {
@@ -14,6 +15,15 @@ fun Calendar.resetToDay() {
     this.set(Calendar.HOUR, 0)
 }
 
-fun formatCount(number: Int): String {
-    return number.toString().replace(Regex("(\\d)(?=(\\d{3})+\$)"), "\$1,")
+fun formatCount(number: Int, space: Boolean): String {
+    return number.toString().replace(Regex("(\\d)(?=(\\d{3})+\$)"), "\$1," + if (space) " " else "")
+}
+
+fun getDayLabel(i: Int): String {
+    if (i == 1)
+        return "Yesterday"
+
+    val cal = Calendar.getInstance()
+    cal.add(Calendar.DAY_OF_MONTH, (i * -1) - 1)
+    return DayOfWeek.of(cal.get(Calendar.DAY_OF_WEEK)).toString().toLowerCase().capitalize()
 }
