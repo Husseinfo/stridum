@@ -2,6 +2,7 @@ package io.github.husseinfo.stridum
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.util.Calendar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -137,8 +138,15 @@ fun ListPreviousDays(previousDays: List<StepModel>) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun StatPreview() {
+    val d = Calendar.getInstance().time
+    val list = List(6) { StepModel(d, (3000..18000).random()) }
     StridumTheme {
-        TodayCount(2390)
+        Column {
+            TodayCount(
+                count = 12430
+            )
+            ListPreviousDays(list)
+        }
     }
 }
