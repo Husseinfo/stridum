@@ -29,12 +29,14 @@ import kotlinx.coroutines.launch
 class SensorListener : Service(), SensorEventListener {
     private val serviceScope = CoroutineScope(Job())
     private val maxBufferSize = 100
-    private val notificationChannelID: String = getString(R.string.notif_step_channel_id)
+    private lateinit var notificationChannelID: String
     private var sinceBoot = 0
     private var buffer = 0
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
+
+        notificationChannelID = getString(R.string.notif_step_channel_id)
 
         if (Build.VERSION.SDK_INT >= 34) {
             startForeground(
@@ -60,11 +62,11 @@ class SensorListener : Service(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        Log.d(notificationChannelID, "Accuracy Changed: $accuracy")
+        Log.d(getString(R.string.app_name), "Accuracy Changed: $accuracy")
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        var stepCount = event.values[0].toInt()
+        val stepCount = event.values[0].toInt()
         if (sinceBoot == 0) {
             sinceBoot = stepCount
             return
@@ -73,22 +75,23 @@ class SensorListener : Service(), SensorEventListener {
         buffer += stepCount - sinceBoot
         sinceBoot = stepCount
 
-
         if (buffer < maxBufferSize)
             return
-        else {
-            stepCount = buffer
-            buffer = 0
-        }
 
+        saveStepCount()
+    }
+
+    private fun saveStepCount() {
         serviceScope.launch(Dispatchers.IO) {
-            StepRepository.updateHour(baseContext, Calendar.getInstance(), stepCount)
+            StepRepository.updateHour(baseContext, Calendar.getInstance(), buffer)
+            buffer = 0
             updateWidget()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        saveStepCount()
         try {
             val sm = getSystemService(SENSOR_SERVICE) as SensorManager
             sm.unregisterListener(this)
@@ -140,9 +143,8 @@ class SensorListener : Service(), SensorEventListener {
     }
 
     private fun updateWidget() {
-        val intent = Intent(this, CountWidget::class.java).apply {
-            action = CountWidget.ACTION_UPDATE_WIDGET
-        }
+        val intent = Intent(this, CountWidget::class.java)
+        intent.action = CountWidget.ACTION_UPDATE_WIDGET
         sendBroadcast(intent)
     }
 }
