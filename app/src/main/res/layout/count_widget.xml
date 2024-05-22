@@ -9,6 +9,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:textColor="@android:color/white"
-        android:textSize="26sp"
+        android:textSize="20sp"
         android:textStyle="bold|italic" />
 </RelativeLayout>

@@ -33,7 +33,8 @@ val Typography = Typography(
     titleMedium = TextStyle(
         fontWeight = FontWeight.W400,
         fontStyle = FontStyle.Italic,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
+        color = PurpleGrey40,
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.Cursive,

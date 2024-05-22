@@ -2,6 +2,7 @@ package io.github.husseinfo.stridum.data
 
 import android.icu.util.Calendar
 import java.time.DayOfWeek
+import java.util.Date
 
 
 fun Calendar.resetToHour() {
@@ -13,6 +14,12 @@ fun Calendar.resetToHour() {
 fun Calendar.resetToDay() {
     this.resetToHour()
     this.set(Calendar.HOUR, 0)
+}
+
+fun Date.formatHour(): String {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    return cal.get(Calendar.HOUR_OF_DAY).toString().padStart(2, '0')
 }
 
 fun formatCount(number: Int, space: Boolean): String {

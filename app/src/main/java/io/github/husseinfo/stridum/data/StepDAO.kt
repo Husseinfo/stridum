@@ -15,7 +15,7 @@ interface StepDAO {
     fun getCurrentHour(date: Date): StepModel
 
 
-    @Query("SELECT SUM(count) FROM step where date > :date")
+    @Query("SELECT SUM(count) FROM step where date >= :date")
     fun getTodaySteps(date: Date): Int
 
     @Query("SELECT SUM(count) FROM step where date BETWEEN :date and :date + 24 * 3600 * 1000")
@@ -24,7 +24,7 @@ interface StepDAO {
     @Query("SELECT * FROM step where date BETWEEN :date and :date + 24 * 3600 * 1000")
     fun getDayHours(date: Date): List<StepModel>
 
-    @Query("SELECT * FROM step where date > :date")
+    @Query("SELECT * FROM step where date >= :date")
     fun getTodayHours(date: Date): List<StepModel>
 
     @Insert

@@ -66,7 +66,7 @@ class SensorListener : Service(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        val stepCount = event.values[0].toInt()
+        var stepCount = event.values[0].toInt()
         if (sinceBoot == 0) {
             sinceBoot = stepCount
             return
@@ -77,21 +77,19 @@ class SensorListener : Service(), SensorEventListener {
 
         if (buffer < maxBufferSize)
             return
-
-        saveStepCount()
-    }
-
-    private fun saveStepCount() {
-        serviceScope.launch(Dispatchers.IO) {
-            StepRepository.updateHour(baseContext, Calendar.getInstance(), buffer)
+        else {
+            stepCount = buffer
             buffer = 0
+        }
+
+        serviceScope.launch(Dispatchers.IO) {
+            StepRepository.updateHour(baseContext, Calendar.getInstance(), stepCount)
             updateWidget()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        saveStepCount()
         try {
             val sm = getSystemService(SENSOR_SERVICE) as SensorManager
             sm.unregisterListener(this)
