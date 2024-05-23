@@ -52,9 +52,7 @@ fun TodayCount(count: Int, modifier: Modifier = Modifier) {
         }
 
         Text(
-            style = Typography.titleLarge,
-            text = formatCount(count, false),
-            modifier = modifier
+            style = Typography.titleLarge, text = formatCount(count, false), modifier = modifier
         )
         Text(
             style = Typography.titleMedium,
@@ -77,8 +75,7 @@ fun TodayHours(hours: List<StepModel>) {
         val coefficient = size.height / data.maxOrNull()!!
         val points = data.mapIndexed { index, value ->
             Offset(
-                x = index * (size.width / (data.size - 1)),
-                y = size.height - (value * coefficient)
+                x = index * (size.width / (data.size - 1)), y = size.height - (value * coefficient)
             )
         }
 
@@ -99,15 +96,11 @@ fun TodayHours(hours: List<StepModel>) {
         }
         points.forEachIndexed { i, point ->
             drawCircle(
-                color = Pink40,
-                radius = 5.dp.toPx(),
-                center = point
+                color = Pink40, radius = 5.dp.toPx(), center = point
             )
 
             drawCircle(
-                color = Color.DarkGray,
-                radius = 3.dp.toPx(),
-                center = Offset(point.x, size.height)
+                color = Color.DarkGray, radius = 3.dp.toPx(), center = Offset(point.x, size.height)
             )
 
             drawLine(
@@ -119,22 +112,19 @@ fun TodayHours(hours: List<StepModel>) {
             )
 
             drawIntoCanvas { canvas ->
-                canvas.nativeCanvas.drawText(
-                    hours[i].date.formatHour(),
+                canvas.nativeCanvas.drawText(hours[i].date.formatHour(),
                     point.x - 30,
                     size.height + 60,
                     paintX.asFrameworkPaint().apply {
                         this.textSize = 45f
-                    }
-                )
-                canvas.nativeCanvas.drawText(
-                    ((size.height - point.y) / coefficient).toInt().toString(),
+                    })
+                canvas.nativeCanvas.drawText(((size.height - point.y) / coefficient).toInt()
+                    .toString(),
                     point.x - 40,
                     point.y - 40,
                     paintY.asFrameworkPaint().apply {
                         textSize = 40f
-                    }
-                )
+                    })
             }
 
             previousPoint = point
@@ -166,12 +156,15 @@ fun ListPreviousDays(previousDays: List<StepModel>) {
 fun MainPreview() {
     val d = Calendar.getInstance().time
     val previousDays = List(6) { StepModel(d, (3000..18000).random()) }
-    val todayHours = List(5) { StepModel(d, ((it + 1) * 100)) }
+    val todayHours = List(5) {
+        StepModel(Calendar.getInstance().apply {
+            this.set(Calendar.HOUR_OF_DAY, it + 9)
+        }.time, (600..2000).random())
+    }
+
     StridumTheme {
         Column {
-            TodayCount(
-                count = (10000..18000).random()
-            )
+            TodayCount(todayHours.sumOf { it.count })
             TodayHours(todayHours)
             ListPreviousDays(previousDays)
         }
