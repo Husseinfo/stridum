@@ -6,7 +6,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import io.github.husseinfo.stridum.data.StepRepository
@@ -69,7 +73,10 @@ class MainActivity : ComponentActivity() {
                 StridumTheme {
                     Column {
                         TodayCount(count = count ?: 0)
-                        TodayHours(todayHours!!)
+                        if (todayHours?.size!! > 1)
+                            TodayHours(todayHours)
+                        else
+                            Box(Modifier.padding(30.dp))
                         ListPreviousDays(previousDays)
                     }
                 }
