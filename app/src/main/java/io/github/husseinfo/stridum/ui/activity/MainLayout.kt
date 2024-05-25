@@ -2,6 +2,7 @@ package io.github.husseinfo.stridum.ui.activity
 
 import android.icu.util.Calendar
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -133,10 +134,13 @@ fun TodayHours(hours: List<StepModel>) {
 }
 
 @Composable
-fun ListPreviousDays(previousDays: List<StepModel>) {
+fun ListPreviousDays(previousDays: List<StepModel>, onDayClick: (StepModel) -> Unit = {}) {
     LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 20.dp, end = 20.dp)) {
         items(previousDays.size) { item ->
-            Row(Modifier.padding(top = 10.dp)) {
+            Row(
+                Modifier
+                    .padding(top = 10.dp)
+                    .clickable { onDayClick(previousDays[item]) }) {
                 Text(
                     style = Typography.bodyMedium,
                     text = getDayLabel(item.inc()),
@@ -164,7 +168,7 @@ fun MainPreview() {
 
     StridumTheme {
         Column {
-            TodayCount(todayHours.sumOf { it.count })
+            TodayCount(todayHours.sumOf(StepModel::count))
             TodayHours(todayHours)
             ListPreviousDays(previousDays)
         }

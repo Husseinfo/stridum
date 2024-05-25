@@ -7,15 +7,16 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import io.github.husseinfo.stridum.ui.activity.MainActivity
 import io.github.husseinfo.stridum.R
 import io.github.husseinfo.stridum.data.StepRepository
 import io.github.husseinfo.stridum.data.formatCountWidget
+import io.github.husseinfo.stridum.ui.activity.MainActivity
 
 class CountWidget : AppWidgetProvider() {
     companion object {
         const val ACTION_UPDATE_WIDGET = "ACTION_UPDATE_WIDGET"
     }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -30,7 +31,8 @@ class CountWidget : AppWidgetProvider() {
         super.onReceive(context, intent)
         if (intent.action == ACTION_UPDATE_WIDGET) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, CountWidget::class.java))
+            val appWidgetIds =
+                appWidgetManager.getAppWidgetIds(ComponentName(context, CountWidget::class.java))
             onUpdate(context, appWidgetManager, appWidgetIds)
         }
     }

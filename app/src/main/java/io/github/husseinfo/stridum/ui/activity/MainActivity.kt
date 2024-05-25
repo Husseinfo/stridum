@@ -2,6 +2,7 @@ package io.github.husseinfo.stridum.ui.activity
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.util.Calendar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import io.github.husseinfo.stridum.data.StepModel
 import io.github.husseinfo.stridum.data.StepRepository
+import io.github.husseinfo.stridum.data.resetToDay
 import io.github.husseinfo.stridum.service.SensorListener
 import io.github.husseinfo.stridum.ui.theme.StridumTheme
 import kotlinx.coroutines.Dispatchers
@@ -51,36 +54,38 @@ class MainActivity : ComponentActivity() {
         updateUI()
     }
 
-    private fun updateUI() {
-        val countCoroutine = lifecycleScope.async(Dispatchers.IO) {
-            StepRepository.getTodaySteps(baseContext)
-        }
-
+    private fun updateUI(cal: Calendar = Calendar.getInstance()) {
         val previousDaysCoroutine = lifecycleScope.async(Dispatchers.IO) {
             StepRepository.getPreviousDays(baseContext)
         }
-
-        val todayHoursCoroutine = lifecycleScope.async(Dispatchers.IO) {
-            StepRepository.getTodayHours(baseContext)
+        val dayHoursCoroutine = lifecycleScope.async(Dispatchers.IO) {
+            StepRepository.getDayHours(baseContext, cal)
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
-            val count = countCoroutine.await()
-            val todayHours = todayHoursCoroutine.await()
+            val dayHours = dayHoursCoroutine.await()
             val previousDays = previousDaysCoroutine.await()
 
             setContent {
                 StridumTheme {
                     Column {
-                        TodayCount(count = count ?: 0)
-                        if (todayHours?.size!! > 1)
-                            TodayHours(todayHours)
+                        TodayCount(count = dayHours?.sumOf(StepModel::count) ?: 0)
+                        if (dayHours?.size!! > 1)
+                            TodayHours(dayHours)
                         else
                             Box(Modifier.padding(30.dp))
-                        ListPreviousDays(previousDays)
+                        ListPreviousDays(previousDays, ::onDayClick)
                     }
                 }
             }
+        }
+    }
+
+    private fun onDayClick(step: StepModel) {
+        Calendar.getInstance().apply {
+            time = step.date
+            resetToDay()
+            updateUI(this)
         }
     }
 }

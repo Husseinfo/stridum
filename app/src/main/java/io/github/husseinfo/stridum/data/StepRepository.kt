@@ -8,8 +8,7 @@ class StepRepository {
         private var dao: StepDAO? = null
 
         private fun getStepDAO(context: Context): StepDAO? {
-            if (dao == null)
-                dao = AppDatabase.getDb(context)?.stepDAO()
+            if (dao == null) dao = AppDatabase.getDb(context)?.stepDAO()
             return dao
         }
 
@@ -25,10 +24,13 @@ class StepRepository {
             }
         }
 
-        fun getTodayHours(context: Context): List<StepModel>? {
-            Calendar.getInstance().also {
+        fun getDayHours(
+            context: Context,
+            cal: Calendar = Calendar.getInstance()
+        ): List<StepModel>? {
+            cal.also {
                 it.resetToDay()
-                return getStepDAO(context)?.getTodayHours(it.time)
+                return getStepDAO(context)?.getDayHours(it.time)
             }
         }
 
